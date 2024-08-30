@@ -15,8 +15,21 @@ const messages = document.querySelector(".message");
 // play again
 const playAgain = document.querySelector(".play-again");
 
-const word = "magnolia";
+let word = "magnolia";
 const guessedLetters = [];
+let remainingGuesses = 8;
+
+const getWord = async function () {
+    const response = await fetch('https://gist.githubusercontent.com/skillcrush-curriculum/7061f1d4d3d5bfe47efbfbcfe42bf57e/raw/5ffc447694486e7dea686f34a6c085ae371b43fe/words.txt');
+    const words = await response.text();
+    // console.log(words);
+    const wordArray = words.split("\n");
+    // console.log(wordArray);
+    const randomWord = Math.floor(Math.random() * wordArray.length);
+    word = wordArray[randomWord].trim();
+    placeholder(word);
+}
+getWord();
 
 // **symbol as a letter placeholder** //
 const placeholder = function (word) {
@@ -66,6 +79,7 @@ const makeGuess = function (guess) {
  } else {
     guessedLetters.push(guess);
     console.log(guessedLetters);
+    correctLetters(guess);    
     wordGuessUpdate();
     updateWordInProgress(guessedLetters);
  }
@@ -96,9 +110,31 @@ const updateWordInProgress = function (guessedLetters) {
     didYouWin();
 };
 
+const correctLetters = function (guess) {
+    const upperWord = word.toUpperCase();
+    if (!upperWord.includes(guess)) {
+        messages.innerText = `Sorry, the word doesn't have an ${guess}.`;
+        remainingGuesses -= 1;
+    } else {
+        messages.innerText = `Good guess! The word contains the letter ${guess}!`;
+    }
+
+    if (remainingGuesses === 0) {
+        messages.innerText = `Game over! Sorry, the correct word was ${word}. Better luck next time!`
+    } else if (remainingGuesses === 1) {
+        guessesLeft.innerText = `${remainingGuesses} guess`;
+    } else {
+        guessesLeft.innerText = `${remainingGuesses} guesses`;
+    }
+};
+
 const didYouWin = function () {
     if (word.toUpperCase() === wordInProgress.innerText) {
         messages.classList.add("win");
         messages.innerHTML = `<p class="highlight">You guessed correct the word! Congrats!</p>`;
     }
 };
+
+if (remainingGuesses === 0) {
+
+}
