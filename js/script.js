@@ -16,7 +16,7 @@ const messages = document.querySelector(".message");
 const playAgain = document.querySelector(".play-again");
 
 let word = "magnolia";
-const guessedLetters = [];
+let guessedLetters = [];
 let remainingGuesses = 8;
 
 const getWord = async function () {
@@ -35,7 +35,7 @@ getWord();
 const placeholder = function (word) {
     const placeholderLetters = [];
     for (const letter of word) {
-        console.log(letter);
+        // console.log(letter);
         placeholderLetters.push("●");
     }
     wordInProgress.innerText= placeholderLetters.join("");
@@ -119,8 +119,9 @@ const correctLetters = function (guess) {
         messages.innerText = `Good guess! The word contains the letter ${guess}!`;
     }
 
-    if (remainingGuesses === 0) {
-        messages.innerText = `Game over! Sorry, the correct word was ${word}. Better luck next time!`
+    if (remainingGuesses <= 0) {
+        messages.innerText = `Game over! Sorry, the correct word was ${word}. Better luck next time!`;
+        startOver();
     } else if (remainingGuesses === 1) {
         guessesLeft.innerText = `${remainingGuesses} guess`;
     } else {
@@ -132,9 +133,30 @@ const didYouWin = function () {
     if (word.toUpperCase() === wordInProgress.innerText) {
         messages.classList.add("win");
         messages.innerHTML = `<p class="highlight">You guessed correct the word! Congrats!</p>`;
+    
+    startOver();
     }
 };
 
-if (remainingGuesses === 0) {
+const startOver = function () {
+    button.classList.add("hide");
+    numGuesses.classList.add("hide");
+    allGuesses.classList.add("hide");
+    playAgain.classList.remove("hide");
+};
 
-}
+playAgain.addEventListener("click", function () {
+    messages.classList.remove("win");
+    messages.innerHTML = "";
+    allGuesses.innerHTML = "";
+    remainingGuesses = 8;
+    guessedLettersuessed = [];
+    guessesLeft.innerText = `${remainingGuesses} guesses`;
+
+    getWord();
+    
+    button.classList.remove("hide");
+    numGuesses.classList.remove("hide");
+    allGuesses.classList.remove("hide");
+    playAgain.classList.add("hide");
+});
